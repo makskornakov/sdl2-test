@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/Users/makskornakov/c++/cmake projs/sdl2-test/build",
+  "command": "/usr/bin/clang++  -I\"/Users/makskornakov/c++/cmake projs/sdl2-test/src/include\" -I/usr/local/include/SDL2 -g -std=c++20 -arch x86_64 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk -mmacosx-version-min=10.7 -o CMakeFiles/sdl2-test.dir/src/main.cpp.o -c \"/Users/makskornakov/c++/cmake projs/sdl2-test/src/main.cpp\"",
+  "file": "/Users/makskornakov/c++/cmake projs/sdl2-test/src/main.cpp",
+  "output": "CMakeFiles/sdl2-test.dir/src/main.cpp.o"
+}
+]

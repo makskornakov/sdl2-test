@@ -1,0 +1,1 @@
+set(IS_APP_BUNDLE TRUE CACHE BOOL "Flag indicating whether it's an app bundle")
