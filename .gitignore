@@ -1,0 +1,7 @@
+# Ignore Frameworks folder
+Frameworks/
+
+# Ignore build folder
+build/
+
+.DS_Store
