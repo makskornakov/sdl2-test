@@ -1,1 +1,0 @@
-/usr/bin/clang++ -g -arch x86_64 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.2.sdk -mmacosx-version-min=10.7 -Wl,-search_paths_first -Wl,-headerpad_max_install_names "CMakeFiles/sdl2-test.dir/src/main.cpp.o" -o sdl2-test.app/Contents/MacOS/sdl2-test  -Wl,-rpath,/usr/local/lib /usr/local/lib/libSDL2.dylib 

@@ -1,3 +1,0 @@
-/Users/makskornakov/c++/cmake projs/sdl2-test/build/CMakeFiles/sdl2-test.dir
-/Users/makskornakov/c++/cmake projs/sdl2-test/build/CMakeFiles/edit_cache.dir
-/Users/makskornakov/c++/cmake projs/sdl2-test/build/CMakeFiles/rebuild_cache.dir
