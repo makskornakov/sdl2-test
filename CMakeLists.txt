@@ -13,7 +13,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Set source files
 set(SOURCES src/main.cpp)
 
-set (HEADERS src/include/Window.h src/include/Layer.h src/include/EventReceiver.h src/include/Button.h src/include/Application.h)
+set(HEADERS src/include/Window.h src/include/Layer.h src/include/EventReceiver.h src/include/Button.h src/include/Application.h)
 
 # Add your executable
 add_executable(sdl2-test ${SOURCES} ${HEADERS})
@@ -37,7 +37,8 @@ target_include_directories(
 )
 
 target_link_libraries(
-  sdl2-test PRIVATE ${CMAKE_SOURCE_DIR}/Frameworks/libSDL2-2.0.0.dylib
+  # sdl2-test PRIVATE ${CMAKE_SOURCE_DIR}/Frameworks/libSDL2-2.0.0.dylib
+  sdl2-test PRIVATE /usr/local/lib/libSDL2-2.0.0.dylib
 )
 
 # set the path depending on if it is an app bundle or not
@@ -46,18 +47,18 @@ if (IS_APP_BUNDLE)
     set (RESOURCES_PATH $<TARGET_FILE_DIR:sdl2-test>/../Resources)
     set (RPATH @executable_path/../Frameworks)
 else ()
-    set (FRAMEWORKS_PATH $<TARGET_FILE_DIR:sdl2-test>)
-    set (RESOURCES_PATH $<TARGET_FILE_DIR:sdl2-test>)
-    set (RPATH @executable_path)
+    set (FRAMEWORKS_PATH $<TARGET_FILE_DIR:sdl2-test>/Frameworks)
+    set (RESOURCES_PATH $<TARGET_FILE_DIR:sdl2-test>/Resources)
+    set (RPATH @executable_path/Frameworks)
 endif ()
 
 # copy one dylib to app bundle into ../Frameworks 
 add_custom_command(TARGET sdl2-test POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/Frameworks
-        ${FRAMEWORKS_PATH}
+    COMMAND ${CMAKE_COMMAND} -E copy
+        # ${CMAKE_SOURCE_DIR}/Frameworks
+        /usr/local/lib/libSDL2-2.0.0.dylib
+        ${FRAMEWORKS_PATH}/libSDL2-2.0.0.dylib
 )
-
 # copy one dylib to app bundle into ../Resources
 add_custom_command(TARGET sdl2-test POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -65,10 +66,6 @@ add_custom_command(TARGET sdl2-test POST_BUILD
         ${RESOURCES_PATH}
 )
 
-# change path of the dylib in the executable to @executable_path/../Frameworks
-add_custom_command(TARGET sdl2-test POST_BUILD
-    COMMAND install_name_tool -change
-    @rpath/libSDL2-2.0.0.dylib
-    ${RPATH}/libSDL2-2.0.0.dylib
-        $<TARGET_FILE:sdl2-test>
-)
+# set @rpath to be @executable_path/../Frameworks
+set(CMAKE_BUILD_RPATH ${RPATH})
+

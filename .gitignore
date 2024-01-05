@@ -1,7 +1,5 @@
-# Ignore Frameworks folder
-Frameworks/
+# Ignore Frameworks folder you are linking the library from the project folder
+# Frameworks/
 
-# Ignore build folder
 build/
-
 .DS_Store
