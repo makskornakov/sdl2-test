@@ -1,0 +1,3 @@
+{
+  "cmake.configureArgs": ["-DCMAKE_OSX_ARCHITECTURES=x86_64"]
+}

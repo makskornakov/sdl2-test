@@ -37,7 +37,7 @@ target_include_directories(
 )
 
 target_link_libraries(
-  sdl2-test PRIVATE /usr/local/lib/libSDL2.dylib
+  sdl2-test PRIVATE ${CMAKE_SOURCE_DIR}/Frameworks/libSDL2-2.0.0.dylib
 )
 
 # set the path depending on if it is an app bundle or not
