@@ -11,8 +11,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Set source files
-file(GLOB SOURCES "src/*.cpp")
-file(GLOB HEADERS "src/*.h")
+# file(GLOB SOURCES "src/*.cpp")
+# file(GLOB HEADERS "src/*.h")
+
+# same but also includes subdirectories like src/ECS (recursive)
+file(GLOB_RECURSE SOURCES "src/*.cpp")
+file(GLOB_RECURSE HEADERS "src/*.h")
+
 
 add_executable(sdl2-test ${SOURCES} ${HEADERS})
 
@@ -26,9 +31,9 @@ else ()
 endif ()
 
 # set the include directory
-# target_include_directories(
-#   sdl2-test PRIVATE src/include
-# )
+target_include_directories(
+  sdl2-test PRIVATE src/ECS
+)
 
 target_include_directories(
   sdl2-test PRIVATE /usr/local/include/SDL2
