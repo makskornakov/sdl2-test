@@ -4,9 +4,10 @@
 #include "SDL_image.h"
 #include <iostream>
 #include <vector>
+#include <string>
 
-class ColliderComponent;
-
+class AssetManager;
+// class ColliderComponent;
 class Game
 {
 public:
@@ -22,6 +23,8 @@ public:
   void clean();
 
   static SDL_Renderer *renderer;
+  static AssetManager *assets;
+
   static SDL_Event event;
   static bool isRunning;
   static SDL_Rect camera;
@@ -31,7 +34,8 @@ public:
     groupMap,
     groupPlayers,
     // groupEnemies,
-    groupColliders
+    groupColliders,
+    groupProjectiles
   };
 
 private:

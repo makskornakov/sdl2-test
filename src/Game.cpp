@@ -4,17 +4,22 @@
 #include "ECS/Components.h"
 #include "Vector2D.h"
 #include "Collision.h"
+#include "AssetManager.h"
 
 Map *map;
 Manager manager;
 
 SDL_Renderer *Game::renderer = nullptr;
+
 SDL_Event Game::event;
+
+AssetManager *Game::assets = new AssetManager(&manager);
 
 // std::vector<ColliderComponent *> Game::colliders;
 
-bool Game::isRunning = false;
 SDL_Rect Game::camera = {0, 0, 800, 640};
+
+bool Game::isRunning = false;
 
 auto &newPlayer(manager.addEntity());
 
@@ -58,7 +63,11 @@ void Game::init(const char *title, int width, int height, bool fullScreen, const
     isRunning = true;
   }
 
-  map = new Map("../Resources/terrain_ss.png", 2, 32, executablePath);
+  assets->AddTexture("terrain", "../Resources/terrain_ss.png");
+  assets->AddTexture("player", "../Resources/player_anims.png");
+  assets->AddTexture("projectile", "../Resources/projectile.png");
+
+  map = new Map("terrain", 2, 32, executablePath);
   // load map from file
   // map->LoadMap("../Resources/p16x16.txt", 16, 16);
   map->LoadMap("../Resources/map.map", 25, 20, executablePath);
@@ -67,13 +76,15 @@ void Game::init(const char *title, int width, int height, bool fullScreen, const
 
   // TransformComponent(float x, float y, int h, int w, float sc)
   newPlayer.addComponent<TransformComponent>(780, 350, 32, 32, 2.5f);
-  newPlayer.addComponent<SpriteComponent>("../Resources/player_anims.png", true);
+  newPlayer.addComponent<SpriteComponent>("player", true);
   newPlayer.addComponent<KeyboardController>();
   newPlayer.addComponent<ColliderComponent>("player");
   newPlayer.addGroup(Game::groupMap);
 
+  assets->CreateProjectile(Vector2D(600, 100), Vector2D{2, 0}, 200, 2, "projectile");
+
   // TileComponent(int srcX, int srcY, int xPos, int yPos, int tSize, int tScale, const char *path)
-  playerCollider.addComponent<TileComponent>(0, 0, 0, 0, 32, 1, "../Resources/collider.png");
+  // playerCollider.addComponent<TileComponent>(0, 0, 0, 0, 32, 1, "../Resources/collider.png");
   // playerCollider.addComponent<ColliderComponent>("terrain");
   // playerCollider.addComponent<ColliderComponent>("player");
 }
@@ -81,6 +92,7 @@ void Game::init(const char *title, int width, int height, bool fullScreen, const
 auto &tiles(manager.getGroup(Game::groupMap));
 auto &players(manager.getGroup(Game::groupPlayers));
 auto &colliders(manager.getGroup(Game::groupColliders));
+auto &projectiles(manager.getGroup(Game::groupProjectiles));
 
 void Game::handleEvents()
 {
@@ -118,6 +130,15 @@ void Game::update()
     if (Collision::AABB(cCol, playerCol))
     {
       newPlayer.getComponent<TransformComponent>().position = playerPos;
+    }
+  }
+
+  for (auto &p : projectiles)
+  {
+    if (Collision::AABB(playerCol, p->getComponent<ColliderComponent>().collider))
+    {
+      std::cout << "Hit player !" << std::endl;
+      p->destroy();
     }
   }
 
@@ -165,6 +186,11 @@ void Game::render()
   for (auto &p : players)
   {
     p->draw();
+  }
+
+  for (auto &pr : projectiles)
+  {
+    pr->draw();
   }
 
   SDL_RenderPresent(renderer);

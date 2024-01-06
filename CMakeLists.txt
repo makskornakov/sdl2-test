@@ -42,9 +42,9 @@ else ()
 endif ()
 
 # set the include directory
-target_include_directories(
-  sdl2-test PRIVATE src/ECS
-)
+# target_include_directories(
+#   sdl2-test PRIVATE src/ECS
+# )
 
 target_include_directories(
   sdl2-test PRIVATE /usr/local/include/SDL2
