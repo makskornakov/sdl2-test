@@ -8,6 +8,7 @@ Map *map;
 Manager manager;
 
 SDL_Renderer *Game::renderer = nullptr;
+SDL_Event Game::event;
 
 auto &newPlayer(manager.addEntity());
 
@@ -46,11 +47,11 @@ void Game::init(const char *title, int width, int height, bool fullScreen)
 
   newPlayer.addComponent<TransformComponent>();
   newPlayer.addComponent<SpriteComponent>("../Resources/player.png");
+  newPlayer.addComponent<KeyboardController>();
 }
 
 void Game::handleEvents()
 {
-  SDL_Event event;
 
   SDL_PollEvent(&event);
 
@@ -69,11 +70,11 @@ void Game::update()
 
   manager.refresh();
   manager.update();
-  newPlayer.getComponent<TransformComponent>().position.Add(Vector2D(0.5f, 0.2f));
-  if (newPlayer.getComponent<TransformComponent>().position.x > 300)
-  {
-    newPlayer.getComponent<SpriteComponent>().setTex("../Resources/enemy.png");
-  }
+  // newPlayer.getComponent<TransformComponent>().position.Add(Vector2D(0.5f, 0.2f));
+  // if (newPlayer.getComponent<TransformComponent>().position.x > 300)
+  // {
+  //   newPlayer.getComponent<SpriteComponent>().setTex("../Resources/enemy.png");
+  // }
 }
 
 void Game::render()
