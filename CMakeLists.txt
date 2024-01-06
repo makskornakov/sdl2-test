@@ -11,11 +11,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Set source files
-set(SOURCES src/main.cpp src/Game.cpp src/TextureManager.cpp)
+file(GLOB SOURCES "src/*.cpp")
+file(GLOB HEADERS "src/*.h")
 
-set(HEADERS src/Game.h src/TextureManager.h)
-
-# Add your executable
 add_executable(sdl2-test ${SOURCES} ${HEADERS})
 
 if (IS_APP_BUNDLE)
