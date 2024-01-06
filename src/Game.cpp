@@ -16,9 +16,15 @@ std::vector<ColliderComponent *> Game::colliders;
 auto &newPlayer(manager.addEntity());
 auto &wall(manager.addEntity());
 
-auto &tile0(manager.addEntity());
-auto &tile1(manager.addEntity());
-auto &tile2(manager.addEntity());
+const char *mapFile = "../Resources/terrain_ss.png";
+
+enum groupLabels : std::size_t
+{
+  groupMap,
+  groupPlayers,
+  groupEnemies,
+  groupColliders
+};
 
 Game::Game()
 {
@@ -28,7 +34,7 @@ Game::~Game()
 {
 }
 
-void Game::init(const char *title, int width, int height, bool fullScreen)
+void Game::init(const char *title, int width, int height, bool fullScreen, const std::string &executablePath)
 {
   int flags = 0;
 
@@ -50,24 +56,17 @@ void Game::init(const char *title, int width, int height, bool fullScreen)
   }
 
   map = new Map();
+  // load map from file
+  // map->LoadMap("../Resources/p16x16.txt", 16, 16);
+  Map::LoadMap("../Resources/map.map", 25, 20, executablePath);
 
   // ECS implementation
 
-  tile0.addComponent<TileComponent>(200, 200, 32, 32, 0);
-  tile0.addComponent<ColliderComponent>("water");
-  tile1.addComponent<TileComponent>(250, 250, 32, 32, 1);
-  tile1.addComponent<ColliderComponent>("dirt");
-  tile2.addComponent<TileComponent>(300, 300, 32, 32, 2);
-  tile2.addComponent<ColliderComponent>("grass");
-
-  wall.addComponent<TransformComponent>(300.0f, 300.0f, 300, 20, 1);
-  wall.addComponent<SpriteComponent>("../Resources/tiles/dirt.png");
-  wall.addComponent<ColliderComponent>("wall");
-
-  newPlayer.addComponent<TransformComponent>(2);
-  newPlayer.addComponent<SpriteComponent>("../Resources/player.png");
+  newPlayer.addComponent<TransformComponent>(4);
+  newPlayer.addComponent<SpriteComponent>("../Resources/player_anims.png", true);
   newPlayer.addComponent<KeyboardController>();
   newPlayer.addComponent<ColliderComponent>("player");
+  newPlayer.addGroup(groupPlayers);
 }
 
 void Game::handleEvents()
@@ -93,7 +92,7 @@ void Game::update()
 
   // if (Collision::AABB(newPlayer.getComponent<ColliderComponent>().collider, wall.getComponent<ColliderComponent>().collider))
   // {
-  //   newPlayer.getComponent<TransformComponent>().velocity * -1;
+  //   // newPlayer.getComponent<TransformComponent>().velocity * -1;
   //   std::cout << "player hit wall" << std::endl;
   // }
 
@@ -103,12 +102,27 @@ void Game::update()
   }
 }
 
+auto &tiles(manager.getGroup(groupMap));
+auto &players(manager.getGroup(groupPlayers));
+auto &enemies(manager.getGroup(groupEnemies));
+// auto &colliders(manager.getGroup(groupColliders));
+
 void Game::render()
 {
   SDL_RenderClear(renderer);
-  // map->DrawMap();
-
-  manager.draw();
+  // define the order in which entities are drawn (tiles at the back, etc.)
+  for (auto &t : tiles)
+  {
+    t->draw();
+  }
+  for (auto &p : players)
+  {
+    p->draw();
+  }
+  for (auto &e : enemies)
+  {
+    e->draw();
+  }
 
   SDL_RenderPresent(renderer);
 }
@@ -118,4 +132,11 @@ void Game::clean()
   SDL_DestroyWindow(window);
   SDL_DestroyRenderer(renderer);
   SDL_Quit();
+}
+
+void Game::AddTile(int srcX, int srcY, int xPos, int yPos)
+{
+  auto &tile(manager.addEntity());
+  tile.addComponent<TileComponent>(srcX, srcY, xPos, yPos, mapFile);
+  tile.addGroup(groupMap);
 }

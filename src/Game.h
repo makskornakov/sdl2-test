@@ -13,7 +13,7 @@ public:
   Game();
   ~Game();
 
-  void init(const char *title, int width, int height, bool fullscreen);
+  void init(const char *title, int width, int height, bool fullscreen, const std::string &executablePath);
 
   void handleEvents();
   void update();
@@ -21,6 +21,7 @@ public:
   void render();
   void clean();
 
+  static void AddTile(int srcX, int srcY, int xPos, int yPos);
   static SDL_Renderer *renderer;
   static SDL_Event event;
   static std::vector<ColliderComponent *> colliders;

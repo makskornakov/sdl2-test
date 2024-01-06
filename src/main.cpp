@@ -11,8 +11,13 @@ int main(int argc, char *argv[])
   Uint32 frameStart;
   int frameTime;
 
+  const std::string executablePath = argv[0];
+
+  // file path to executable (not on all OS's its nice out of the box)
+  const std::string executableDir = executablePath.substr(0, executablePath.find_last_of("\\/"));
+
   game = new Game();
-  game->init("WeDark Game", 800, 640, false);
+  game->init("WeDark Game", 800, 640, false, executableDir);
 
   while (game->running())
   {
