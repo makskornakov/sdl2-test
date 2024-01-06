@@ -13,7 +13,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Set source files
 set(SOURCES src/main.cpp)
 
-set(HEADERS src/include/Window.h src/include/Layer.h src/include/EventReceiver.h src/include/Button.h src/include/Application.h)
+set(HEADERS src/include/Window.h)
 
 # Add your executable
 add_executable(sdl2-test ${SOURCES} ${HEADERS})
