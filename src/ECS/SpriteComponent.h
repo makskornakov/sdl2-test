@@ -1,6 +1,6 @@
 #pragma once
 #include "Components.h"
-#include "ECS.h"
+#include "../TextureManager.h"
 
 class SpriteComponent : public Component
 {
