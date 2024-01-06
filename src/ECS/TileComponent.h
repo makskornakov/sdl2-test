@@ -2,6 +2,7 @@
 #include "ECS.h"
 #include <SDL.h>
 #include "../TextureManager.h"
+#include "../Vector2D.h"
 
 class TileComponent : public Component
 {
@@ -17,7 +18,7 @@ public:
     SDL_DestroyTexture(texture);
   }
 
-  TileComponent(int srcX, int srcY, int xPos, int yPos, const char *path)
+  TileComponent(int srcX, int srcY, int xPos, int yPos, int tSize, int tScale, const char *path)
   {
     texture = TextureManager::LoadTexture(path);
 
@@ -26,11 +27,11 @@ public:
 
     srcRect.x = srcX;
     srcRect.y = srcY;
-    srcRect.w = srcRect.h = 32;
+    srcRect.w = srcRect.h = tSize;
 
     destRect.x = xPos;
     destRect.y = yPos;
-    destRect.w = destRect.h = 64;
+    destRect.w = destRect.h = tSize * tScale;
   }
 
   void update() override

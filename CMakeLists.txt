@@ -13,11 +13,22 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Set source files
 # file(GLOB SOURCES "src/*.cpp")
 # file(GLOB HEADERS "src/*.h")
-
+# set the path depending on if it is an app bundle or not
+if (IS_APP_BUNDLE)
+    set (FRAMEWORKS_PATH $<TARGET_FILE_DIR:sdl2-test>/../Frameworks)
+    set (RESOURCES_PATH $<TARGET_FILE_DIR:sdl2-test>/../Resources)
+    set (RPATH @executable_path/../Frameworks)
+else ()
+    set (FRAMEWORKS_PATH $<TARGET_FILE_DIR:sdl2-test>/Frameworks)
+    set (RESOURCES_PATH $<TARGET_FILE_DIR:sdl2-test>/Resources)
+    set (RPATH @executable_path/Frameworks)
+endif ()
 # same but also includes subdirectories like src/ECS (recursive)
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 file(GLOB_RECURSE HEADERS "src/*.h")
 
+# set @rpath to be @executable_path/../Frameworks
+set(CMAKE_BUILD_RPATH ${RPATH})
 
 add_executable(sdl2-test ${SOURCES} ${HEADERS})
 
@@ -41,23 +52,14 @@ target_include_directories(
 
 target_link_libraries(
   # sdl2-test PRIVATE ${CMAKE_SOURCE_DIR}/Frameworks/libSDL2-2.0.0.dylib
-  sdl2-test PRIVATE /usr/local/lib/libSDL2-2.0.0.dylib /usr/local/lib/libSDL2_image-2.0.801.2.0.dylib
+  sdl2-test PRIVATE /usr/local/lib/libSDL2-2.0.0.dylib /usr/local/lib/libSDL2_image-2.0.801.0.0.dylib
 )
 
 # target_link_libraries(
 #   sdl2-test PRIVATE /usr/local/lib/libSDL2_image-2.0.0.dylib
 # )
 
-# set the path depending on if it is an app bundle or not
-if (IS_APP_BUNDLE)
-    set (FRAMEWORKS_PATH $<TARGET_FILE_DIR:sdl2-test>/../Frameworks)
-    set (RESOURCES_PATH $<TARGET_FILE_DIR:sdl2-test>/../Resources)
-    set (RPATH @executable_path/../Frameworks)
-else ()
-    set (FRAMEWORKS_PATH $<TARGET_FILE_DIR:sdl2-test>/Frameworks)
-    set (RESOURCES_PATH $<TARGET_FILE_DIR:sdl2-test>/Resources)
-    set (RPATH @executable_path/Frameworks)
-endif ()
+
 
 # copy one dylib to app bundle into ../Frameworks 
 add_custom_command(TARGET sdl2-test POST_BUILD
@@ -71,8 +73,8 @@ add_custom_command(TARGET sdl2-test POST_BUILD
 add_custom_command(TARGET sdl2-test POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         # ${CMAKE_SOURCE_DIR}/Frameworks
-        /usr/local/lib/libSDL2_image-2.0.801.2.0.dylib
-        ${FRAMEWORKS_PATH}/libSDL2_image-2.0.801.2.0.dylib
+        /usr/local/lib/libSDL2_image-2.0.801.0.0.dylib
+        ${FRAMEWORKS_PATH}/libSDL2_image-2.0.801.0.0.dylib
 )
 
 add_custom_command(TARGET sdl2-test POST_BUILD
@@ -81,6 +83,5 @@ add_custom_command(TARGET sdl2-test POST_BUILD
         ${RESOURCES_PATH}
 )
 
-# set @rpath to be @executable_path/../Frameworks
-set(CMAKE_BUILD_RPATH ${RPATH})
+
 

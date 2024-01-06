@@ -11,27 +11,23 @@ Manager manager;
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
 
-std::vector<ColliderComponent *> Game::colliders;
+// std::vector<ColliderComponent *> Game::colliders;
 
 bool Game::isRunning = false;
 SDL_Rect Game::camera = {0, 0, 800, 640};
 
 auto &newPlayer(manager.addEntity());
-auto &wall(manager.addEntity());
 
-const char *mapFile = "../Resources/terrain_ss.png";
+// player colider display
+auto &playerCollider(manager.addEntity());
 
-enum groupLabels : std::size_t
-{
-  groupMap,
-  groupPlayers,
-  groupEnemies,
-  groupColliders
-};
+// auto &wall(manager.addEntity());
 
-auto &tiles(manager.getGroup(groupMap));
-auto &players(manager.getGroup(groupPlayers));
-auto &enemies(manager.getGroup(groupEnemies));
+// const char *mapFile = "../Resources/terrain_ss.png";
+
+// auto &tiles(manager.getGroup(groupMap));
+// auto &players(manager.getGroup(groupPlayers));
+// auto &enemies(manager.getGroup(groupEnemies));
 
 Game::Game()
 {
@@ -62,19 +58,29 @@ void Game::init(const char *title, int width, int height, bool fullScreen, const
     isRunning = true;
   }
 
-  map = new Map();
+  map = new Map("../Resources/terrain_ss.png", 2, 32, executablePath);
   // load map from file
   // map->LoadMap("../Resources/p16x16.txt", 16, 16);
-  Map::LoadMap("../Resources/map.map", 25, 20, executablePath);
+  map->LoadMap("../Resources/map.map", 25, 20, executablePath);
 
   // ECS implementation
 
-  newPlayer.addComponent<TransformComponent>(4);
+  // TransformComponent(float x, float y, int h, int w, float sc)
+  newPlayer.addComponent<TransformComponent>(780, 350, 32, 32, 2.5f);
   newPlayer.addComponent<SpriteComponent>("../Resources/player_anims.png", true);
   newPlayer.addComponent<KeyboardController>();
   newPlayer.addComponent<ColliderComponent>("player");
-  newPlayer.addGroup(groupPlayers);
+  newPlayer.addGroup(Game::groupMap);
+
+  // TileComponent(int srcX, int srcY, int xPos, int yPos, int tSize, int tScale, const char *path)
+  playerCollider.addComponent<TileComponent>(0, 0, 0, 0, 32, 1, "../Resources/collider.png");
+  // playerCollider.addComponent<ColliderComponent>("terrain");
+  // playerCollider.addComponent<ColliderComponent>("player");
 }
+
+auto &tiles(manager.getGroup(Game::groupMap));
+auto &players(manager.getGroup(Game::groupPlayers));
+auto &colliders(manager.getGroup(Game::groupColliders));
 
 void Game::handleEvents()
 {
@@ -94,8 +100,26 @@ void Game::handleEvents()
 void Game::update()
 {
 
+  SDL_Rect playerCol = newPlayer.getComponent<ColliderComponent>().collider;
+  Vector2D playerPos = newPlayer.getComponent<TransformComponent>().position;
+
   manager.refresh();
   manager.update();
+
+  // set colider position to player position
+  // playerCollider.getComponent<TransformComponent>().position = playerPos;
+  // draw player colider
+  // playerCollider.update();
+  // playerCollider.draw();
+
+  for (auto &c : colliders)
+  {
+    SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
+    if (Collision::AABB(cCol, playerCol))
+    {
+      newPlayer.getComponent<TransformComponent>().position = playerPos;
+    }
+  }
 
   // camera follows player
   camera.x = newPlayer.getComponent<TransformComponent>().position.x - 400;
@@ -134,13 +158,13 @@ void Game::render()
   {
     t->draw();
   }
+  for (auto &c : colliders)
+  {
+    c->draw();
+  }
   for (auto &p : players)
   {
     p->draw();
-  }
-  for (auto &e : enemies)
-  {
-    e->draw();
   }
 
   SDL_RenderPresent(renderer);
@@ -151,11 +175,4 @@ void Game::clean()
   SDL_DestroyWindow(window);
   SDL_DestroyRenderer(renderer);
   SDL_Quit();
-}
-
-void Game::AddTile(int srcX, int srcY, int xPos, int yPos)
-{
-  auto &tile(manager.addEntity());
-  tile.addComponent<TileComponent>(srcX, srcY, xPos, yPos, mapFile);
-  tile.addGroup(groupMap);
 }

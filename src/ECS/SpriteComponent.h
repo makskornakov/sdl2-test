@@ -79,9 +79,13 @@ public:
     destRect.h = transform->height * transform->scale;
   }
 
+  // SDL_Texture *colliderTex = TextureManager::LoadTexture("../Resources/collider.png");
+
   void draw() override
   {
     TextureManager::Draw(texture, srcRect, destRect, spriteFlip);
+
+    // TextureManager::Draw(colliderTex, {0, 0, srcRect.w, srcRect.h}, destRect, spriteFlip);
   }
 
   void Play(const char *animName)
