@@ -13,6 +13,9 @@ SDL_Event Game::event;
 
 std::vector<ColliderComponent *> Game::colliders;
 
+bool Game::isRunning = false;
+SDL_Rect Game::camera = {0, 0, 800, 640};
+
 auto &newPlayer(manager.addEntity());
 auto &wall(manager.addEntity());
 
@@ -25,6 +28,10 @@ enum groupLabels : std::size_t
   groupEnemies,
   groupColliders
 };
+
+auto &tiles(manager.getGroup(groupMap));
+auto &players(manager.getGroup(groupPlayers));
+auto &enemies(manager.getGroup(groupEnemies));
 
 Game::Game()
 {
@@ -90,21 +97,33 @@ void Game::update()
   manager.refresh();
   manager.update();
 
-  // if (Collision::AABB(newPlayer.getComponent<ColliderComponent>().collider, wall.getComponent<ColliderComponent>().collider))
-  // {
-  //   // newPlayer.getComponent<TransformComponent>().velocity * -1;
-  //   std::cout << "player hit wall" << std::endl;
-  // }
+  // camera follows player
+  camera.x = newPlayer.getComponent<TransformComponent>().position.x - 400;
+  camera.y = newPlayer.getComponent<TransformComponent>().position.y - 320;
 
-  for (auto cc : colliders)
+  if (camera.x < 0)
   {
-    Collision::AABB(newPlayer.getComponent<ColliderComponent>(), *cc);
+    camera.x = 0;
   }
+  if (camera.y < 0)
+  {
+    camera.y = 0;
+  }
+  if (camera.x > camera.w)
+  {
+    camera.x = camera.w;
+  }
+  if (camera.y > camera.h)
+  {
+    camera.y = camera.h;
+  }
+
+  // for (auto cc : colliders)
+  // {
+  //   Collision::AABB(newPlayer.getComponent<ColliderComponent>(), *cc);
+  // }
 }
 
-auto &tiles(manager.getGroup(groupMap));
-auto &players(manager.getGroup(groupPlayers));
-auto &enemies(manager.getGroup(groupEnemies));
 // auto &colliders(manager.getGroup(groupColliders));
 
 void Game::render()
