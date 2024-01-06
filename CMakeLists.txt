@@ -11,9 +11,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Set source files
-set(SOURCES src/main.cpp)
+set(SOURCES src/main.cpp src/Game.cpp src/TextureManager.cpp)
 
-set(HEADERS src/include/Window.h)
+set(HEADERS src/Game.h src/TextureManager.h)
 
 # Add your executable
 add_executable(sdl2-test ${SOURCES} ${HEADERS})
@@ -28,9 +28,9 @@ else ()
 endif ()
 
 # set the include directory
-target_include_directories(
-  sdl2-test PRIVATE src/include
-)
+# target_include_directories(
+#   sdl2-test PRIVATE src/include
+# )
 
 target_include_directories(
   sdl2-test PRIVATE /usr/local/include/SDL2
@@ -38,8 +38,12 @@ target_include_directories(
 
 target_link_libraries(
   # sdl2-test PRIVATE ${CMAKE_SOURCE_DIR}/Frameworks/libSDL2-2.0.0.dylib
-  sdl2-test PRIVATE /usr/local/lib/libSDL2-2.0.0.dylib
+  sdl2-test PRIVATE /usr/local/lib/libSDL2-2.0.0.dylib /usr/local/lib/libSDL2_image-2.0.801.2.0.dylib
 )
+
+# target_link_libraries(
+#   sdl2-test PRIVATE /usr/local/lib/libSDL2_image-2.0.0.dylib
+# )
 
 # set the path depending on if it is an app bundle or not
 if (IS_APP_BUNDLE)
@@ -59,7 +63,15 @@ add_custom_command(TARGET sdl2-test POST_BUILD
         /usr/local/lib/libSDL2-2.0.0.dylib
         ${FRAMEWORKS_PATH}/libSDL2-2.0.0.dylib
 )
-# copy one dylib to app bundle into ../Resources
+
+# copy one dylib to app bundle into ../Frameworks
+add_custom_command(TARGET sdl2-test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        # ${CMAKE_SOURCE_DIR}/Frameworks
+        /usr/local/lib/libSDL2_image-2.0.801.2.0.dylib
+        ${FRAMEWORKS_PATH}/libSDL2_image-2.0.801.2.0.dylib
+)
+
 add_custom_command(TARGET sdl2-test POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/Resources
