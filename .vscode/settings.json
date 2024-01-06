@@ -1,3 +1,7 @@
 {
-  "cmake.configureArgs": ["-DCMAKE_OSX_ARCHITECTURES=x86_64;arm64"]
+  "cmake.configureArgs": ["-DCMAKE_OSX_ARCHITECTURES=x86_64;arm64"],
+  "files.associations": {
+    ".env*": "dotenv",
+    "vector": "cpp"
+  }
 }

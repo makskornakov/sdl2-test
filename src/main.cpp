@@ -78,6 +78,14 @@ bool loop()
   // store all clicked mouse positions
   static vector<vector<int>> clickedMousePositions;
 
+  // store if mouse is clicked
+  static bool mouseIsClicked = false;
+  // store all drawn (when mouse is clicked and moved) pixels
+  static vector<vector<int>> drawnPixels;
+
+  // array of connected pixel arrays
+  static vector<vector<vector<int>>> connectedPixels;
+
   // Clear the window
   SDL_SetRenderDrawColor(renderer, 40, 40, 40, 255);
   SDL_RenderClear(renderer);
@@ -93,10 +101,38 @@ bool loop()
       // update mouse position
       mousePosition[0] = e.motion.x;
       mousePosition[1] = e.motion.y;
+
+      // if mouse is clicked, store the current mouse position
+      if (mouseIsClicked)
+      {
+        drawnPixels.push_back({e.motion.x, e.motion.y});
+      }
       break;
     case SDL_MOUSEBUTTONDOWN:
       // store mouse position
       clickedMousePositions.push_back({e.button.x, e.button.y});
+      // set mouseIsClicked to true
+      mouseIsClicked = true;
+      break;
+    case SDL_MOUSEBUTTONUP:
+      // store mouse position
+      clickedMousePositions.push_back({e.button.x, e.button.y});
+      // set mouseIsClicked to false
+      mouseIsClicked = false;
+      // store all drawn pixels in connectedPixels
+      connectedPixels.push_back(drawnPixels);
+      // clear drawnPixels
+      drawnPixels.clear();
+      break;
+    // delete key
+    case SDL_KEYDOWN:
+      if (e.key.keysym.sym == SDLK_DELETE || e.key.keysym.sym == SDLK_BACKSPACE)
+      {
+        // clear all drawn pixels and clicked mouse positions
+        drawnPixels.clear();
+        clickedMousePositions.clear();
+        connectedPixels.clear();
+      }
       break;
     }
   }
@@ -108,6 +144,30 @@ bool loop()
   for (auto &pos : clickedMousePositions)
   {
     drawCircle(renderer, pos[0], pos[1], 5, {255, 0, 0});
+  }
+
+  // set drawing color to green
+  SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+
+  // draw the line that connects all pixels drawn while mouse was clicked
+  if (drawnPixels.size() > 1)
+  {
+    for (int i = 0; i < drawnPixels.size() - 1; i++)
+    {
+      SDL_RenderDrawLine(renderer, drawnPixels[i][0], drawnPixels[i][1], drawnPixels[i + 1][0], drawnPixels[i + 1][1]);
+    }
+  }
+
+  // draw all connected pixels (lines)
+  for (auto &pixels : connectedPixels)
+  {
+    if (pixels.size() > 1)
+    {
+      for (int i = 0; i < pixels.size() - 1; i++)
+      {
+        SDL_RenderDrawLine(renderer, pixels[i][0], pixels[i][1], pixels[i + 1][0], pixels[i + 1][1]);
+      }
+    }
   }
 
   // Set drawing color to black
