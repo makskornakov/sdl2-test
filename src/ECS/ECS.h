@@ -67,7 +67,7 @@ public:
   template <typename T>
   bool hasComponent() const
   {
-    return componentBitSet[getComponentTypeID<T>];
+    return componentBitSet.test(getComponentTypeID<T>());
   }
 
   template <typename T, typename... TArgs>
@@ -75,7 +75,7 @@ public:
   {
     T *c(new T(std::forward<TArgs>(mArgs)...));
     c->entity = this;
-    std::unique_ptr<Component> uPtr{c};
+    std::unique_ptr<T> uPtr{c};
     components.emplace_back(std::move(uPtr));
 
     componentArray[getComponentTypeID<T>()] = c;

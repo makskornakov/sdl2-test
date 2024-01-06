@@ -1,5 +1,6 @@
 #pragma once
 #include "Components.h"
+// #include "SDL.h" // might not be needed
 #include "../TextureManager.h"
 
 class SpriteComponent : public Component
@@ -32,14 +33,16 @@ public:
     transform = &entity->getComponent<TransformComponent>();
 
     srcRect.x = srcRect.y = 0;
-    srcRect.w = srcRect.h = 64;
-    destRect.w = destRect.h = 128;
+    srcRect.w = transform->width;
+    srcRect.h = transform->height;
   }
 
   void update() override
   {
     destRect.x = int(transform->position.x);
     destRect.y = int(transform->position.y);
+    destRect.w = transform->width * transform->scale;
+    destRect.h = transform->height * transform->scale;
   }
 
   void draw() override

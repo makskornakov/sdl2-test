@@ -3,6 +3,7 @@
 #include "Map.h"
 #include "ECS/Components.h"
 #include "Vector2D.h"
+#include "Collision.h"
 
 Map *map;
 Manager manager;
@@ -11,6 +12,7 @@ SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
 
 auto &newPlayer(manager.addEntity());
+auto &wall(manager.addEntity());
 
 Game::Game()
 {
@@ -41,13 +43,16 @@ void Game::init(const char *title, int width, int height, bool fullScreen)
     isRunning = true;
   }
 
-  // player = new GameObject("../Resources/player.png", 0, 0);
-  // enemy = new GameObject("../Resources/enemy.png", 100, 100);
   map = new Map();
 
-  newPlayer.addComponent<TransformComponent>();
+  wall.addComponent<TransformComponent>(300.0f, 300.0f, 300, 20, 1);
+  wall.addComponent<SpriteComponent>("../Resources/tiles/dirt.png");
+  wall.addComponent<ColliderComponent>("wall");
+
+  newPlayer.addComponent<TransformComponent>(2);
   newPlayer.addComponent<SpriteComponent>("../Resources/player.png");
   newPlayer.addComponent<KeyboardController>();
+  newPlayer.addComponent<ColliderComponent>("player");
 }
 
 void Game::handleEvents()
@@ -70,20 +75,21 @@ void Game::update()
 
   manager.refresh();
   manager.update();
-  // newPlayer.getComponent<TransformComponent>().position.Add(Vector2D(0.5f, 0.2f));
-  // if (newPlayer.getComponent<TransformComponent>().position.x > 300)
-  // {
-  //   newPlayer.getComponent<SpriteComponent>().setTex("../Resources/enemy.png");
-  // }
+
+  if (Collision::AABB(newPlayer.getComponent<ColliderComponent>().collider, wall.getComponent<ColliderComponent>().collider))
+  {
+    // newPlayer.getComponent<TransformComponent>().scale = 1;
+    std::cout << "player hit wall" << std::endl;
+  }
 }
 
 void Game::render()
 {
   SDL_RenderClear(renderer);
   map->DrawMap();
-  // player->render();
+
   manager.draw();
-  // enemy->render();
+
   SDL_RenderPresent(renderer);
 }
 
