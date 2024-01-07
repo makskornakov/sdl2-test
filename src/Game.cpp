@@ -5,6 +5,7 @@
 #include "Vector2D.h"
 #include "Collision.h"
 #include "AssetManager.h"
+#include <sstream>
 
 Map *map;
 Manager manager;
@@ -22,9 +23,10 @@ SDL_Rect Game::camera = {0, 0, 800, 640};
 bool Game::isRunning = false;
 
 auto &newPlayer(manager.addEntity());
+auto &label(manager.addEntity());
 
 // player colider display
-auto &playerCollider(manager.addEntity());
+// auto &playerCollider(manager.addEntity());
 
 // auto &wall(manager.addEntity());
 
@@ -63,9 +65,16 @@ void Game::init(const char *title, int width, int height, bool fullScreen, const
     isRunning = true;
   }
 
+  if (TTF_Init() == -1)
+  {
+    std::cout << "Error : SDL_TTF" << std::endl;
+  }
+
   assets->AddTexture("terrain", "../Resources/terrain_ss.png");
   assets->AddTexture("player", "../Resources/player_anims.png");
   assets->AddTexture("projectile", "../Resources/projectile.png");
+
+  assets->AddFont("Tektur", "../Resources/Tektur-static.ttf", 16);
 
   map = new Map("terrain", 2, 32, executablePath);
   // load map from file
@@ -79,7 +88,11 @@ void Game::init(const char *title, int width, int height, bool fullScreen, const
   newPlayer.addComponent<SpriteComponent>("player", true);
   newPlayer.addComponent<KeyboardController>();
   newPlayer.addComponent<ColliderComponent>("player");
-  newPlayer.addGroup(Game::groupMap);
+  newPlayer.addGroup(Game::groupPlayers);
+
+  SDL_Color setTextColor = {255, 0, 0, 255};
+
+  label.addComponent<UILabel>(10, 10, "Test String", "Tektur", setTextColor);
 
   assets->CreateProjectile(Vector2D(600, 100), Vector2D{2, 0}, 200, 2, "projectile");
 
@@ -114,6 +127,10 @@ void Game::update()
 
   SDL_Rect playerCol = newPlayer.getComponent<ColliderComponent>().collider;
   Vector2D playerPos = newPlayer.getComponent<TransformComponent>().position;
+
+  std::stringstream ss;
+  ss << "Player position: " << playerPos;
+  label.getComponent<UILabel>().setLabelText(ss.str(), "Tektur");
 
   manager.refresh();
   manager.update();
@@ -179,10 +196,10 @@ void Game::render()
   {
     t->draw();
   }
-  for (auto &c : colliders)
-  {
-    c->draw();
-  }
+  // for (auto &c : colliders)
+  // {
+  //   c->draw();
+  // }
   for (auto &p : players)
   {
     p->draw();
@@ -192,6 +209,8 @@ void Game::render()
   {
     pr->draw();
   }
+
+  label.draw();
 
   SDL_RenderPresent(renderer);
 }

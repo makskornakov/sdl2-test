@@ -47,13 +47,20 @@ endif ()
 # )
 
 target_include_directories(
-  sdl2-test PRIVATE /usr/local/include/SDL2
+  sdl2-test PRIVATE /usr/local/include/SDL2 /usr/local/include/freetype2
 )
+
 
 target_link_libraries(
   # sdl2-test PRIVATE ${CMAKE_SOURCE_DIR}/Frameworks/libSDL2-2.0.0.dylib
-  sdl2-test PRIVATE /usr/local/lib/libSDL2-2.0.0.dylib /usr/local/lib/libSDL2_image-2.0.801.0.0.dylib
+  sdl2-test PRIVATE
+  /usr/local/lib/libSDL2-2.0.0.dylib
+  /usr/local/lib/libSDL2_image-2.0.801.0.0.dylib
+  /usr/local/lib/libSDL2_ttf-2.0.15.0.0.dylib
+  /Library/Frameworks/freetype.framework/Versions/A/freetype
 )
+
+
 
 # target_link_libraries(
 #   sdl2-test PRIVATE /usr/local/lib/libSDL2_image-2.0.0.dylib
@@ -77,11 +84,25 @@ add_custom_command(TARGET sdl2-test POST_BUILD
         ${FRAMEWORKS_PATH}/libSDL2_image-2.0.801.0.0.dylib
 )
 
+# copy one dylib to app bundle into ../Frameworks
+add_custom_command(TARGET sdl2-test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        # ${CMAKE_SOURCE_DIR}/Frameworks
+        /usr/local/lib/libSDL2_ttf-2.0.15.0.0.dylib
+        ${FRAMEWORKS_PATH}/libSDL2_ttf-2.0.15.0.0.dylib
+)
+
+# copy one dylib to app bundle into ../Frameworks
+add_custom_command(TARGET sdl2-test POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        # ${CMAKE_SOURCE_DIR}/Frameworks
+        /Library/Frameworks/freetype.framework
+        ${FRAMEWORKS_PATH}/freetype.framework
+)
+
 add_custom_command(TARGET sdl2-test POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/Resources
         ${RESOURCES_PATH}
 )
-
-
 
