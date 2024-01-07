@@ -91,11 +91,12 @@ void Game::init(const char *title, int width, int height, bool fullScreen, const
   newPlayer.addComponent<ColliderComponent>("player");
   newPlayer.addGroup(Game::groupPlayers);
 
-  SDL_Color setTextColor = {255, 0, 0, 255};
+  SDL_Color setTextColor = {255, 255, 255, 255};
 
   label.addComponent<UILabel>(10, 10, "Test String", "Tektur", setTextColor);
 
-  button.addComponent<UIButton>("stop", 280, 20, 60, 30, "Stop", "Tektur", setTextColor, []()
+  SDL_Color setButtonColor = {255, 0, 0, 255};
+  button.addComponent<UIButton>("stop", 280, 20, 60, 30, "Stop", "Tektur", setButtonColor, []()
                                 { Game::isRunning = false; });
   button.getComponent<UIButton>().init();
 
@@ -204,10 +205,10 @@ void Game::render()
   {
     t->draw();
   }
-  // for (auto &c : colliders)
-  // {
-  //   c->draw();
-  // }
+  for (auto &c : colliders)
+  {
+    c->draw();
+  }
   for (auto &p : players)
   {
     p->draw();
