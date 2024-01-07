@@ -24,6 +24,7 @@ bool Game::isRunning = false;
 
 auto &newPlayer(manager.addEntity());
 auto &label(manager.addEntity());
+auto &button(manager.addEntity());
 
 // player colider display
 // auto &playerCollider(manager.addEntity());
@@ -94,6 +95,10 @@ void Game::init(const char *title, int width, int height, bool fullScreen, const
 
   label.addComponent<UILabel>(10, 10, "Test String", "Tektur", setTextColor);
 
+  button.addComponent<UIButton>("stop", 280, 20, 60, 30, "Stop", "Tektur", setTextColor, []()
+                                { Game::isRunning = false; });
+  button.getComponent<UIButton>().init();
+
   assets->CreateProjectile(Vector2D(600, 100), Vector2D{2, 0}, 200, 2, "projectile");
 
   // TileComponent(int srcX, int srcY, int xPos, int yPos, int tSize, int tScale, const char *path)
@@ -134,6 +139,9 @@ void Game::update()
 
   manager.refresh();
   manager.update();
+
+  // button management (if clicked, quit game)
+  button.getComponent<UIButton>().update();
 
   // set colider position to player position
   // playerCollider.getComponent<TransformComponent>().position = playerPos;
@@ -211,6 +219,11 @@ void Game::render()
   }
 
   label.draw();
+
+  button.draw();
+
+  // print if game is running or not
+  std::cout << "Game is running: " << isRunning << std::endl;
 
   SDL_RenderPresent(renderer);
 }
