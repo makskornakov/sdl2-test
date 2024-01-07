@@ -71,7 +71,7 @@ void Game::init(const char *title, int width, int height, bool fullScreen, const
     std::cout << "Error : SDL_TTF" << std::endl;
   }
 
-  assets->AddTexture("terrain", "../Resources/terrain_ss.png");
+  assets->AddTexture("terrain", "../Resources/terrain_ss2.png");
   assets->AddTexture("player", "../Resources/player_anims.png");
   assets->AddTexture("projectile", "../Resources/projectile.png");
 
@@ -80,12 +80,12 @@ void Game::init(const char *title, int width, int height, bool fullScreen, const
   map = new Map("terrain", 2, 32, executablePath);
   // load map from file
   // map->LoadMap("../Resources/p16x16.txt", 16, 16);
-  map->LoadMap("../Resources/map.map", 25, 20, executablePath);
+  map->LoadMap("../Resources/newmap.map", 25, 20, executablePath);
 
   // ECS implementation
 
   // TransformComponent(float x, float y, int h, int w, float sc)
-  newPlayer.addComponent<TransformComponent>(780, 350, 32, 32, 2.5f);
+  newPlayer.addComponent<TransformComponent>(780, 350, 32, 32, 1.5f);
   newPlayer.addComponent<SpriteComponent>("player", true);
   newPlayer.addComponent<KeyboardController>();
   newPlayer.addComponent<ColliderComponent>("player");

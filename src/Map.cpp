@@ -43,11 +43,12 @@ void Map::LoadMap(std::string textId, int sizeX, int sizeY, const std::string &e
       AddTile(srcX, srcY, x * scaledSize, y * scaledSize);
       mapFile.ignore();
     }
-    mapFile.ignore();
+    // mapFile.ignore();
   }
 
   mapFile.ignore(); // ignore the break line between the map and the colliders
-  mapFile.ignore(); // ignore the first line of the colliders
+  // mapFile.ignore(); // ignore the first line of the colliders
+  // mapFile.ignore(); // ignore the first character of the first line of the colliders
 
   for (int y = 0; y < sizeY; y++)
   {
@@ -63,7 +64,7 @@ void Map::LoadMap(std::string textId, int sizeX, int sizeY, const std::string &e
       }
       mapFile.ignore();
     }
-    mapFile.ignore();
+    // mapFile.ignore();
   }
 
   mapFile.close();
