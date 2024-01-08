@@ -37,6 +37,7 @@ public:
     transform = &entity->getComponent<TransformComponent>();
 
     texture = TextureManager::LoadTexture("../Resources/collider.png");
+    // if entity is a player, make the collider smaller in width
     srcRect = {0, 0, 32, 32};
     destRect = {collider.x, collider.y, collider.w, collider.h};
 
@@ -52,6 +53,12 @@ public:
       collider.w = transform->width * transform->scale;
       collider.h = transform->height * transform->scale;
     }
+    // if player, make the collider smaller in width
+    // if (tag == "player")
+    // {
+    //   collider.w -= 32;
+    //   collider.x += 16;
+    // }
 
     destRect.x = collider.x - Game::camera.x;
     destRect.y = collider.y - Game::camera.y;

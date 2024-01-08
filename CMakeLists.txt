@@ -94,10 +94,10 @@ add_custom_command(TARGET sdl2-test POST_BUILD
 
 # copy one dylib to app bundle into ../Frameworks
 add_custom_command(TARGET sdl2-test POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    COMMAND ${CMAKE_COMMAND} -E copy
         # ${CMAKE_SOURCE_DIR}/Frameworks
-        /Library/Frameworks/freetype.framework
-        ${FRAMEWORKS_PATH}/freetype.framework
+        /Library/Frameworks/freetype.framework/Versions/A/freetype
+        ${FRAMEWORKS_PATH}/freetype.framework/Versions/A/freetype
 )
 
 add_custom_command(TARGET sdl2-test POST_BUILD

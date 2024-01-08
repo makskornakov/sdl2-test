@@ -15,7 +15,7 @@ private:
 
   bool animated = false;
   int frames = 0;
-  int speed = 100;
+  int speed = 150;
 
 public:
   int animIndex = 0;
@@ -35,8 +35,8 @@ public:
   {
     animated = isAnimated;
 
-    Animation idle = Animation(0, 3, speed);
-    Animation walk = Animation(1, 8, speed);
+    Animation idle = Animation(0, 5, speed);
+    Animation walk = Animation(1, 8, 100);
 
     animations.emplace("Idle", idle);
     animations.emplace("Walk", walk);

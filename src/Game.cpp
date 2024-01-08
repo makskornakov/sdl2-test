@@ -72,7 +72,7 @@ void Game::init(const char *title, int width, int height, bool fullScreen, const
   }
 
   assets->AddTexture("terrain", "../Resources/terrain_ss2.png");
-  assets->AddTexture("player", "../Resources/player_anims.png");
+  assets->AddTexture("player", "../Resources/player-anims.png");
   assets->AddTexture("projectile", "../Resources/projectile.png");
 
   assets->AddFont("Tektur", "../Resources/Tektur-static.ttf", 16);
@@ -85,27 +85,19 @@ void Game::init(const char *title, int width, int height, bool fullScreen, const
   // ECS implementation
 
   // TransformComponent(float x, float y, int h, int w, float sc)
-  newPlayer.addComponent<TransformComponent>(780, 350, 32, 32, 1.5f);
+  newPlayer.addComponent<TransformComponent>(780, 350, 64, 64, 1.0f);
   newPlayer.addComponent<SpriteComponent>("player", true);
   newPlayer.addComponent<KeyboardController>();
   newPlayer.addComponent<ColliderComponent>("player");
   newPlayer.addGroup(Game::groupPlayers);
 
-  SDL_Color setTextColor = {255, 255, 255, 255};
+  label.addComponent<UILabel>(10, 10, "Test String", "Tektur", SDL_Color{255, 255, 255, 255});
 
-  label.addComponent<UILabel>(10, 10, "Test String", "Tektur", setTextColor);
-
-  SDL_Color setButtonColor = {255, 0, 0, 255};
-  button.addComponent<UIButton>("stop", 280, 20, 60, 30, "Stop", "Tektur", setButtonColor, []()
-                                { Game::isRunning = false; });
-  button.getComponent<UIButton>().init();
+  void (*buttonCallback)() = []()
+  { Game::isRunning = false; };
+  button.addComponent<UIButton>("stop", 280, 20, 60, 30, "Stop", "Tektur", SDL_Color{255, 0, 0, 255}, buttonCallback);
 
   assets->CreateProjectile(Vector2D(600, 100), Vector2D{2, 0}, 200, 2, "projectile");
-
-  // TileComponent(int srcX, int srcY, int xPos, int yPos, int tSize, int tScale, const char *path)
-  // playerCollider.addComponent<TileComponent>(0, 0, 0, 0, 32, 1, "../Resources/collider.png");
-  // playerCollider.addComponent<ColliderComponent>("terrain");
-  // playerCollider.addComponent<ColliderComponent>("player");
 }
 
 auto &tiles(manager.getGroup(Game::groupMap));
@@ -141,19 +133,10 @@ void Game::update()
   manager.refresh();
   manager.update();
 
-  // button management (if clicked, quit game)
-  button.getComponent<UIButton>().update();
-
-  // set colider position to player position
-  // playerCollider.getComponent<TransformComponent>().position = playerPos;
-  // draw player colider
-  // playerCollider.update();
-  // playerCollider.draw();
-
   for (auto &c : colliders)
   {
     SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
-    if (Collision::AABB(cCol, playerCol))
+    if (Collision::AABB(playerCol, cCol))
     {
       newPlayer.getComponent<TransformComponent>().position = playerPos;
     }
@@ -188,14 +171,7 @@ void Game::update()
   {
     camera.y = camera.h;
   }
-
-  // for (auto cc : colliders)
-  // {
-  //   Collision::AABB(newPlayer.getComponent<ColliderComponent>(), *cc);
-  // }
 }
-
-// auto &colliders(manager.getGroup(groupColliders));
 
 void Game::render()
 {
@@ -224,7 +200,7 @@ void Game::render()
   button.draw();
 
   // print if game is running or not
-  std::cout << "Game is running: " << isRunning << std::endl;
+  // std::cout << "Game is running: " << isRunning << std::endl;
 
   SDL_RenderPresent(renderer);
 }
