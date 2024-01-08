@@ -47,9 +47,9 @@ public:
     velocity.Zero();
   }
 
-  void update() override
-  {
-    position.x += static_cast<int>(velocity.x * speed);
-    position.y += static_cast<int>(velocity.y * speed);
-  }
+  // void update() override
+  // {
+  //   position.x += static_cast<int>(velocity.x * speed);
+  //   position.y += static_cast<int>(velocity.y * speed);
+  // }
 };

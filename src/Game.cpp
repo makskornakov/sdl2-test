@@ -88,8 +88,9 @@ void Game::init(const char *title, int width, int height, bool fullScreen, const
   newPlayer.addComponent<TransformComponent>(780, 350, 64, 64, 1.0f);
   newPlayer.addComponent<SpriteComponent>("player", true);
   newPlayer.addComponent<KeyboardController>();
-  newPlayer.addComponent<ColliderComponent>("player");
+  newPlayer.addComponent<ColliderComponent>("player", 0, 0, 64, 64); // add x,y, size for the collider to appear visually
   newPlayer.addGroup(Game::groupPlayers);
+  // newPlayer.addGroup(Game::groupColliders);
 
   label.addComponent<UILabel>(10, 10, "Test String", "Tektur", SDL_Color{255, 255, 255, 255});
 
@@ -123,24 +124,17 @@ void Game::handleEvents()
 void Game::update()
 {
 
-  SDL_Rect playerCol = newPlayer.getComponent<ColliderComponent>().collider;
-  Vector2D playerPos = newPlayer.getComponent<TransformComponent>().position;
-
   std::stringstream ss;
-  ss << "Player position: " << playerPos;
+  ss << "Player velocity: " << newPlayer.getComponent<TransformComponent>().velocity.x << ", " << newPlayer.getComponent<TransformComponent>().velocity.y;
   label.getComponent<UILabel>().setLabelText(ss.str(), "Tektur");
 
   manager.refresh();
   manager.update();
 
-  for (auto &c : colliders)
-  {
-    SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
-    if (Collision::AABB(playerCol, cCol))
-    {
-      newPlayer.getComponent<TransformComponent>().position = playerPos;
-    }
-  }
+  SDL_Rect playerCol = newPlayer.getComponent<ColliderComponent>().collider;
+  Vector2D playerPos = newPlayer.getComponent<TransformComponent>().position;
+
+  // move player and check for collisions
 
   for (auto &p : projectiles)
   {

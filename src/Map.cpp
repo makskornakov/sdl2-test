@@ -58,7 +58,7 @@ void Map::LoadMap(std::string textId, int sizeX, int sizeY, const std::string &e
       if (c == '1')
       {
         auto &collider(manager.addEntity());
-        collider.addComponent<ColliderComponent>("terrain", x * scaledSize, y * scaledSize, scaledSize);
+        collider.addComponent<ColliderComponent>("terrain", x * scaledSize, y * scaledSize, scaledSize, scaledSize);
         collider.addGroup(Game::groupColliders);
         // mapFile.ignore();
       }

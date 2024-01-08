@@ -20,12 +20,13 @@ public:
     tag = t;
   }
 
-  ColliderComponent(std::string t, int xPos, int yPos, int size)
+  ColliderComponent(std::string t, int xPos, int yPos, int xSize, int ySize)
   {
     tag = t;
     collider.x = xPos;
     collider.y = yPos;
-    collider.w = collider.h = size;
+    collider.w = xSize;
+    collider.h = ySize;
   }
 
   void init() override
@@ -37,15 +38,14 @@ public:
     transform = &entity->getComponent<TransformComponent>();
 
     texture = TextureManager::LoadTexture("../Resources/collider.png");
-    // if entity is a player, make the collider smaller in width
+
     srcRect = {0, 0, 32, 32};
     destRect = {collider.x, collider.y, collider.w, collider.h};
-
-    // Game::colliders.push_back(this);
   }
 
   void update() override
   {
+
     if (tag != "terrain")
     {
       collider.x = static_cast<int>(transform->position.x);
@@ -53,11 +53,11 @@ public:
       collider.w = transform->width * transform->scale;
       collider.h = transform->height * transform->scale;
     }
-    // if player, make the collider smaller in width
+    // if entity is a player, update collider.x and add difference between x and y sizes
     // if (tag == "player")
     // {
-    //   collider.w -= 32;
-    //   collider.x += 16;
+    //   collider.x += (collider.w - destRect.w) / 2;
+    //   collider.w = destRect.w;
     // }
 
     destRect.x = collider.x - Game::camera.x;

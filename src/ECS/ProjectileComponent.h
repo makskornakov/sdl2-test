@@ -22,6 +22,11 @@ public:
   void update() override
   {
     distance += speed;
+    // update the position of the projectile
+    float moveX = velocity.x * speed;
+    float moveY = velocity.y * speed;
+    transform->position.x += moveX;
+    transform->position.y += moveY;
     if (distance > range)
     {
       std::cout << "Out of range" << std::endl;
